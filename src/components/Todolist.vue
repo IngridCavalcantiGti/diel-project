@@ -15,7 +15,7 @@
                 <span>{{ task.time }}</span>
             </div>
             <div class="column is-2 is-flex is-justify-content-space-around">
-                <button class="button is-info" @click="editBtn">
+                <button class="button is-link " @click="editBtn">
                     <span class="icon is-small">
                         <i class="fas fa-edit"></i>
                     </span>

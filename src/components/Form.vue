@@ -19,13 +19,15 @@
 
 <script lang="ts">
 import Timer from '../components/Timer.vue'
+
 import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'Form',
     emits: ['saveTask'],
     components: {
-        Timer
+        Timer,
+      
     },
     data() {
         return {
@@ -57,6 +59,6 @@ export default defineComponent({
 </script>
 <style scoped>
 .box {
-    background: rgb(72, 143, 172);
+    background: #a0aeee;
 }
 </style>

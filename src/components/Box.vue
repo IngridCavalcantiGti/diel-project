@@ -14,6 +14,8 @@ export default defineComponent({
 
 <style scoped>
 .box {
-    background: #FAF0CA;
+    background: transparent;
+    border-left: 10px solid #a0aeee;
+    border-right: 10px solid #a0aeee;
 }
 </style>
