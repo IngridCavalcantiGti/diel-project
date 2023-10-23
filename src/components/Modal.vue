@@ -3,7 +3,7 @@
         <div class="modal-background" @click="close"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Tarefa</p>
+                <p class="modal-card-title">{{ titleModal }}</p>
                 <button class="delete" aria-label="close" @click="close"></button>
             </header>
             <section class="modal-card-body">
@@ -21,6 +21,15 @@
                     <label class="label mx-3">Hora</label>
                     <input class="input" type="time" placeholder="Text input" v-model="time">
                 </div>
+                <div class="mt-5">
+                    <input class="input" v-model="newTag" @keyup.enter="addTag" placeholder="Adicione tag" maxlength="10" />
+                    <div class="flex items-center flex-wrap">
+                        <span v-for="(tag, index) in tags" class="tag is-warning is-medium mr-2 mt-4" :key="index">
+                            {{ tag }}
+                            <button @click="deleteTag(tag)" class="delete is-small"></button>
+                        </span>
+                    </div>
+                </div>
             </section>
             <footer class="modal-card-foot">
                 <button class="button is-link" @click="finishTask">Salvar</button>
@@ -32,9 +41,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
+import ITasks from '../interfaces/ITasks';
 export default defineComponent({
     name: 'Modal',
+    props: {
+        titleModal: { type: String }
+    },
     emits: ['saveModal', 'cancelModal', 'saveTask'],
     data() {
         return {
@@ -42,7 +54,9 @@ export default defineComponent({
             title: '',
             description: '',
             time: '',
-            date: ''
+            date: '',
+            newTag: '',
+            tags: [] as ITasks[],
         };
     },
     methods: {
@@ -54,22 +68,32 @@ export default defineComponent({
             this.showModal = false;
             this.$emit('cancelModal', this.showModal = false);
         },
+        addTag(tags: ITasks) {
+            if (!this.newTag) return;
+            this.tags.push(this.newTag);
+            this.newTag = '';
+        },
+        deleteTag(tags: ITasks) {
+            this.tags.splice(this.tags.indexOf(tags), 1);
+        },
 
         finishTask() {
             this.$emit('saveTask', {
-                // durationInSeconds: elapsedTime,
                 description: this.description,
                 date: this.date.split('-').reverse().join('/'),
                 title: this.title,
                 time: this.time,
-                id: new Date().toISOString()
+                id: new Date().toISOString(),
+                tags: this.tags
             })
             this.$emit('saveModal', this.showModal = false);
-            this.description = ''
-            this.title = ''
-            this.date = ''
-            this.time = ''
-        }
+            this.description = '',
+                this.title = '',
+                this.date = '',
+                this.time = '',
+                this.tags = []
+        },
+
     },
 })
 </script>

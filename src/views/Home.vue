@@ -1,6 +1,7 @@
 <template>
     <div>
-        <Modal @saveModal="saveModal" v-show="isModalVisible" @cancelModal="cancelModal" @saveTask="saveTask" />
+        <Modal @saveModal="saveModal" :titleModal="titleModal" v-show="isModalVisible" @cancelModal="cancelModal"
+            @saveTask="saveTask" />
         <div class="list">
             <Button @onClickRegister="onClickRegister" class="mb-5 h-button" />
             <div class="is-flex  mt-5 flex-container h-task-view">
@@ -11,11 +12,11 @@
             <div class="table-wrapper columns table-heading header-mobile">
                 <div class="column is-3 fl-custom">Título:</div>
                 <div class="column is-3 fl-custom">Descrição:</div>
-                <div class="column is-2 fl-custom">Tempo gasto:</div>
+                <div class="column is-2 fl-custom">Tags:</div>
                 <div class="column is-2 fl-custom">Data / Horário:</div>
                 <div class="column is-2 fl-custom">Ações:</div>
             </div>
-            <Todolist v-for="task in filteredTask" :key="task.id" :task="task" @deleteBtn="deleteBtn(task.id)"
+            <Todolist v-for="(task, id) in filteredTask" :key="id" :task="task" @deleteBtn="deleteBtn(task)"
                 @editBtn="editBtn" class="todolist-mobile" />
             <Box v-if="emptyList" class="todolist-mobile">
                 Você não está produtivo hoje :(
@@ -26,7 +27,6 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Form from '../components/Form.vue'
 import Todolist from '../components/Todolist.vue';
 import ITasks from '../interfaces/ITasks'
 import Box from '../components/Box.vue'
@@ -37,7 +37,6 @@ import Button from '../components/Button.vue'
 export default defineComponent({
     name: "App",
     components: {
-        Form,
         Todolist,
         Box,
         Taskview,
@@ -47,11 +46,12 @@ export default defineComponent({
 
     data() {
         return {
-            // tasks: [{ title: 'Maria' }, { title: 'Pedro', }, { title: 'joão', }] as ITasks[],
-            tasks: [] as ITasks[],
+            tasks: [{ title: 'Maria' }, { title: 'Pedro', }, { title: 'joão', }] as ITasks[],
+            // tasks: [] as ITasks[],
             searchValue: '',
             options: ['Visualização de tarefas', 'Dia', 'Semana', 'Mês'],
             isModalVisible: false,
+            isEdit: false,
         }
     },
     computed: {
@@ -63,21 +63,23 @@ export default defineComponent({
                 ? this.tasks
                 : this.tasks.filter(item => item.title.toLowerCase().includes(this.searchValue.toLowerCase().trim()));
 
+        },
+        titleModal() {
+            return this.isEdit ? "Editar tarefa" : "Criar nova tarefa"
         }
     },
+
     methods: {
         saveTask(task: ITasks) {
             this.tasks.push(task)
-        },
-        deleteBtn(id: string) {
-            this.tasks.splice(id, 1)
-            // console.log('position', position)
-            // console.log('id', id)
-            // this.tasks.splice(+id, 1).toString();
 
+        },
+        deleteBtn(id: ITasks) {
+            this.tasks.splice(this.tasks.indexOf(id), 1);
         },
         editBtn() {
             this.isModalVisible = true
+            this.isEdit = true
         },
         updateValueSelect(value: string) {
             console.log('updateValueSelect', value)
@@ -89,10 +91,11 @@ export default defineComponent({
             this.isModalVisible = false
         },
         onClickRegister() {
+            this.isEdit = false
             this.isModalVisible = true
         }
 
-    }
+    },
 });
 </script>
 <style scoped>
@@ -117,13 +120,14 @@ export default defineComponent({
 
 .fl-custom {
     color: #ffffff;
-    background: #a0aeee;
-}
-
-.fl-custom:nth-child(odd) {
-    color: #ffffff;
+    /* background: #a0aeee; */
     background: #7283cc;
 }
+
+/* .fl-custom:nth-child(odd) {
+    color: #ffffff;
+    background: #7283cc;
+} */
 
 @media (max-width: 800px) {
     .flex-container {

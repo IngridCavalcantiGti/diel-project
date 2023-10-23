@@ -1,8 +1,9 @@
 export default interface ITasks {
     id: string,
-    durationInSeconds: number,
+    tags: string,
     description: string,
     date: string,
     title: string,
-    time: string
+    time: string,
+    newTag: string
 }
