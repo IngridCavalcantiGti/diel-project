@@ -19,9 +19,5 @@ export default defineComponent({
 </script>
 
 <style>
-.back-css {
-    background: #d1d7f3;
-    padding: 2rem;
-    border-bottom: 5px solid #a0aeee;
-}
+@import './Button.css';
 </style>

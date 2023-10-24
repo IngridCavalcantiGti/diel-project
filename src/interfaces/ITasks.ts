@@ -1,9 +1,10 @@
 export default interface ITasks {
     id: string,
-    tags: string,
+    tags: string[],
     description: string,
     date: string,
     title: string,
     time: string,
-    newTag: string
+    newTag: string,
+    tag: ''
 }

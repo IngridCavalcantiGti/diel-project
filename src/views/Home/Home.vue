@@ -1,7 +1,7 @@
 <template>
     <div>
-        <Modal @saveModal="saveModal" :titleModal="titleModal" v-show="isModalVisible" @cancelModal="cancelModal"
-            @saveTask="saveTask" />
+        <Modal :titleModal="titleModal" v-if="isModalVisible" @cancelModal="cancelModal" @saveTask="saveTask"
+            :formData="currentTask" />
         <div class="list">
             <Button @onClickRegister="onClickRegister" class="mb-5 h-button" />
             <div class="is-flex  mt-5 flex-container h-task-view">
@@ -13,11 +13,11 @@
                 <div class="column is-3 fl-custom">Título:</div>
                 <div class="column is-3 fl-custom">Descrição:</div>
                 <div class="column is-2 fl-custom">Tags:</div>
-                <div class="column is-2 fl-custom">Data / Horário:</div>
+                <div class="column is-2 fl-custom">Data | Horário:</div>
                 <div class="column is-2 fl-custom">Ações:</div>
             </div>
             <Todolist v-for="(task, id) in filteredTask" :key="id" :task="task" @deleteBtn="deleteBtn(task)"
-                @editBtn="editBtn" class="todolist-mobile" />
+                @editBtn="editBtn(task)" class="todolist-mobile" />
             <Box v-if="emptyList" class="todolist-mobile">
                 Você não está produtivo hoje :(
             </Box>
@@ -27,12 +27,12 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Todolist from '../components/Todolist.vue';
-import ITasks from '../interfaces/ITasks'
-import Box from '../components/Box.vue'
-import Taskview from '../components/Taskview.vue'
-import Modal from '../components/Modal.vue'
-import Button from '../components/Button.vue'
+import Todolist from '../../components/Todolist/Todolist.vue';
+import ITasks from '../../interfaces/ITasks'
+import Box from '../../components/Box/Box.vue'
+import Taskview from '../../components/Taskview/Taskview.vue'
+import Modal from '../../components/Modal/Modal.vue'
+import Button from '../../components/Button/Button.vue'
 
 export default defineComponent({
     name: "App",
@@ -46,12 +46,12 @@ export default defineComponent({
 
     data() {
         return {
-            tasks: [{ title: 'Maria' }, { title: 'Pedro', }, { title: 'joão', }] as ITasks[],
-            // tasks: [] as ITasks[],
+            tasks: [] as ITasks[],
             searchValue: '',
             options: ['Visualização de tarefas', 'Dia', 'Semana', 'Mês'],
             isModalVisible: false,
             isEdit: false,
+            currentTask: {} as ITasks
         }
     },
     computed: {
@@ -59,36 +59,44 @@ export default defineComponent({
             return this.tasks.length === 0
         },
         filteredTask() {
+
             return !this.searchValue.length
                 ? this.tasks
                 : this.tasks.filter(item => item.title.toLowerCase().includes(this.searchValue.toLowerCase().trim()));
 
         },
         titleModal() {
-            return this.isEdit ? "Editar tarefa" : "Criar nova tarefa"
+            return Object.keys(this.currentTask).length === 0 ? "Criar nova tarefa" : "Editar tarefa"
         }
     },
 
     methods: {
-        saveTask(task: ITasks) {
-            this.tasks.push(task)
-
+        saveTask({ task, edit }: { task: ITasks, edit: boolean }) {
+            if (edit) {
+                const taskIndex = this.tasks.findIndex((item) => {
+                    return item.id === task.id
+                })
+                this.tasks[taskIndex] = { ...task }
+            } else {
+                this.tasks.push(task)
+            }
+            this.isModalVisible = false
+            this.currentTask = {} as ITasks
         },
         deleteBtn(id: ITasks) {
             this.tasks.splice(this.tasks.indexOf(id), 1);
         },
-        editBtn() {
+        editBtn(task: ITasks) {
             this.isModalVisible = true
-            this.isEdit = true
+            this.currentTask = task
         },
         updateValueSelect(value: string) {
             console.log('updateValueSelect', value)
         },
-        saveModal() {
-            this.isModalVisible = false
-        },
+
         cancelModal() {
             this.isModalVisible = false
+            this.currentTask = {} as ITasks
         },
         onClickRegister() {
             this.isEdit = false
@@ -99,49 +107,5 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-/* .table-heading {
-    background: #a0aeee;
-} */
-
-.list {
-    padding: 2rem;
-}
-
-.table-heading {
-    display: flex;
-    flex-wrap: wrap;
-    font-weight: bold;
-    padding: 12px;
-}
-
-.h-task-view {
-    margin-bottom: 50px;
-}
-
-.fl-custom {
-    color: #ffffff;
-    /* background: #a0aeee; */
-    background: #7283cc;
-}
-
-/* .fl-custom:nth-child(odd) {
-    color: #ffffff;
-    background: #7283cc;
-} */
-
-@media (max-width: 800px) {
-    .flex-container {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 535px) {
-    .header-mobile {
-        display: none;
-    }
-
-    .todolist-mobile {
-        margin-top: 100px;
-    }
-}
+@import "./Home.css";
 </style>

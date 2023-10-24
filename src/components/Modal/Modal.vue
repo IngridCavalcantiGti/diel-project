@@ -1,5 +1,5 @@
 <template>
-    <div class="modal is-active" v-show="showModal">
+    <div class="modal is-active">
         <div class="modal-background" @click="close"></div>
         <div class="modal-card">
             <header class="modal-card-head">
@@ -9,7 +9,7 @@
             <section class="modal-card-body">
                 <label class="label">Título</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Título" v-model="title">
+                    <input class="input" type="text" placeholder="Título" v-model="title" maxlength="25">
                 </div>
                 <label class=" label mt-2">Descrição</label>
                 <div class="control">
@@ -40,33 +40,37 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import ITasks from '../interfaces/ITasks';
+import { defineComponent, PropType } from 'vue';
+import ITasks from '../../interfaces/ITasks';
 export default defineComponent({
     name: 'Modal',
     props: {
-        titleModal: { type: String }
+        titleModal: { type: String },
+        formData: { type: Object as PropType<ITasks> }
     },
-    emits: ['saveModal', 'cancelModal', 'saveTask'],
+    emits: ['cancelModal', 'saveTask'],
     data() {
         return {
-            showModal: false,
+            id: '',
             title: '',
             description: '',
             time: '',
             date: '',
             newTag: '',
-            tags: [] as ITasks[],
+            tags: [] as string[],
         };
     },
+    created() {
+        this.title = this.formData?.title ?? ''
+        this.description = this.formData?.description ?? ''
+        this.time = this.formData?.time ?? ''
+        this.date = this.formData?.date ? this.formData?.date.split('/').reverse().join('-') : ''
+        this.tags = this.formData?.tags ?? []
+        this.id = this.formData?.id ?? new Date().toISOString()
+    },
     methods: {
-        save() {
-            this.$emit('saveModal', this.showModal = false);
-            console.log('save');
-        },
         close() {
-            this.showModal = false;
-            this.$emit('cancelModal', this.showModal = false);
+            this.$emit('cancelModal');
         },
         addTag(tags: ITasks) {
             if (!this.newTag) return;
@@ -79,19 +83,22 @@ export default defineComponent({
 
         finishTask() {
             this.$emit('saveTask', {
-                description: this.description,
-                date: this.date.split('-').reverse().join('/'),
-                title: this.title,
-                time: this.time,
-                id: new Date().toISOString(),
-                tags: this.tags
+                task: {
+                    description: this.description,
+                    date: this.date.split('-').reverse().join('/'),
+                    title: this.title,
+                    time: this.time,
+                    id: this.id,
+                    tags: this.tags
+                },
+                edit: this.formData?.id
             })
-            this.$emit('saveModal', this.showModal = false);
-            this.description = '',
-                this.title = '',
-                this.date = '',
-                this.time = '',
-                this.tags = []
+            this.description = ''
+            this.title = ''
+            this.date = ''
+            this.time = ''
+            this.tags = []
+            this.id = ''
         },
 
     },
@@ -99,11 +106,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-textarea {
-    resize: none;
-}
-
-.modal-card-head {
-    background: #d1d7f3;
-}
+@import './Modal.css';
 </style>

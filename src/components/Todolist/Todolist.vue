@@ -7,10 +7,12 @@
             <div class="column is-3">
                 {{ task.description || 'Tarefa sem descrição' }}
             </div>
-            <div class="column is-2 is-flex-direction-column">
-                <span class="tag is-warning is-medium mr-2 mt-4">
-                    {{ task.tags || "sem tags" }}
+            <div class="column is-2 is-flex-direction-column">   {{ tags }}
+                <span v-for="(tag, index) in tags" :key="index" class="tag is-warning is-medium mr-2 mt-4">
+                    {{ tag }}
+                    <!-- fazer v-for -->
                 </span>
+                <span>sem tags</span>
             </div>
             <div class="column is-2">
                 <span class="mr-2">{{ task.date || 'sem data' }}</span>
@@ -34,8 +36,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import Box from '../components/Box.vue'
-import ITasks from '../interfaces/ITasks';
+import Box from '../Box/Box.vue'
+import ITasks from '../../interfaces/ITasks';
 
 export default defineComponent({
     name: "Todolist",
@@ -49,6 +51,7 @@ export default defineComponent({
     data() {
         return {
             date: '',
+            tags: [] as string[],
         }
     },
     methods: {

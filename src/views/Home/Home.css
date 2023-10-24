@@ -1,0 +1,35 @@
+.list {
+    padding: 2rem;
+}
+
+.table-heading {
+    display: flex;
+    flex-wrap: wrap;
+    font-weight: bold;
+    padding: 12px;
+}
+
+.h-task-view {
+    margin-bottom: 50px;
+}
+
+.fl-custom {
+    color: #ffffff;
+    background: #7283cc;
+}
+
+@media (max-width: 800px) {
+    .flex-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 535px) {
+    .header-mobile {
+        display: none;
+    }
+
+    .todolist-mobile {
+        margin-top: 100px;
+    }
+}
