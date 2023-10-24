@@ -7,12 +7,10 @@
             <div class="column is-3">
                 {{ task.description || 'Tarefa sem descrição' }}
             </div>
-            <div class="column is-2 is-flex-direction-column">   {{ tags }}
-                <span v-for="(tag, index) in tags" :key="index" class="tag is-warning is-medium mr-2 mt-4">
+            <div class="column is-2 is-flex-direction-column">
+                <span v-for="(tag, index) in task.tags" :key="index" class="tag is-warning is-medium mr-2 mt-4">
                     {{ tag }}
-                    <!-- fazer v-for -->
                 </span>
-                <span>sem tags</span>
             </div>
             <div class="column is-2">
                 <span class="mr-2">{{ task.date || 'sem data' }}</span>

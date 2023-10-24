@@ -6,5 +6,4 @@ export default interface ITasks {
     title: string,
     time: string,
     newTag: string,
-    tag: ''
 }
